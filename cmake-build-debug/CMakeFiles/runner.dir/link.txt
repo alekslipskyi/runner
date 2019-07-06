@@ -1,1 +1,0 @@
-/usr/bin/c++  -g   CMakeFiles/runner.dir/core/index.cpp.o CMakeFiles/runner.dir/filewatcher/index.cpp.o CMakeFiles/runner.dir/index.cpp.o  -o runner 

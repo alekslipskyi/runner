@@ -1,4 +1,0 @@
-/home/deus/Apps/clion-2019.1.3/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/deus/projects/runner
--- Configuring done
--- Generating done
--- Build files have been written to: /home/deus/projects/runner/cmake-build-debug

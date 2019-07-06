@@ -1,3 +1,0 @@
-/home/deus/projects/runner/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/deus/projects/runner/cmake-build-debug/CMakeFiles/runner.dir
-/home/deus/projects/runner/cmake-build-debug/CMakeFiles/edit_cache.dir

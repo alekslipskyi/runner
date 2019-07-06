@@ -12,7 +12,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1f08ea1f-c5c7-48ae-9c2e-285a71aa35f6" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -40,7 +40,7 @@
         <entry file="file://$PROJECT_DIR$/core/index.cpp">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="191">
-              <caret line="121" column="26" lean-forward="true" selection-start-line="121" selection-start-column="26" selection-end-line="121" selection-end-column="26" />
+              <caret line="121" column="26" selection-start-line="121" selection-start-column="26" selection-end-line="121" selection-end-column="26" />
               <folding>
                 <marker date="1562410603491" expanded="true" signature="3698:3833" ph="..." />
               </folding>
@@ -51,8 +51,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="18" selection-start-column="18" selection-end-column="18" />
+            <state relative-caret-position="15">
+              <caret line="1" column="6" lean-forward="true" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -287,7 +287,7 @@
       <workItem from="1562056048881" duration="4000" />
       <workItem from="1562142498608" duration="99000" />
       <workItem from="1562392283951" duration="4957000" />
-      <workItem from="1562428676696" duration="155000" />
+      <workItem from="1562428676696" duration="777000" />
     </task>
     <task id="LOCAL-00001" summary="remove module">
       <created>1562428811591</created>
@@ -296,17 +296,24 @@
       <option name="project" value="LOCAL" />
       <updated>1562428811591</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="add ignore cmake build debug">
+      <created>1562428844681</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1562428844681</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="28344000" />
+    <option name="totallyTimeSpent" value="28966000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1920" height="999" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.35026738" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.35026738" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -318,7 +325,7 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" />
       <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" visible="true" weight="0.34619883" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="9" visible="true" weight="0.34619883" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Messages" order="11" weight="0.32982457" />
       <window_info anchor="bottom" id="CMake" order="12" weight="0.32982457" />
@@ -335,7 +342,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="wip" />
     <MESSAGE value="remove module" />
-    <option name="LAST_COMMIT_MESSAGE" value="remove module" />
+    <MESSAGE value="add ignore cmake build debug" />
+    <option name="LAST_COMMIT_MESSAGE" value="add ignore cmake build debug" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/test/index.cpp" />
@@ -438,7 +446,7 @@
     <entry file="file://$PROJECT_DIR$/core/index.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="191">
-          <caret line="121" column="26" lean-forward="true" selection-start-line="121" selection-start-column="26" selection-end-line="121" selection-end-column="26" />
+          <caret line="121" column="26" selection-start-line="121" selection-start-column="26" selection-end-line="121" selection-end-column="26" />
           <folding>
             <marker date="1562410603491" expanded="true" signature="3698:3833" ph="..." />
           </folding>
@@ -457,8 +465,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="18" selection-start-column="18" selection-end-column="18" />
+        <state relative-caret-position="15">
+          <caret line="1" column="6" lean-forward="true" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="6" />
         </state>
       </provider>
     </entry>

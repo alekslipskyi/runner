@@ -20,12 +20,11 @@ const string candidates[] = { "--watchpath", "--watchfile", "--forcekill", "--ex
 class Core {
 private:
     string      command;
-    string      env;
     string      path_to_config;
-    pid_t       pid;
+    string      pid;
     string      path_to_watch;
     string      path_to_watch_file;
-    bool        isReloadingProcess;
+    void        recognizePID(string pid);
     bool        is_force_kill;
     void        error(string message);
     void        createProcess();

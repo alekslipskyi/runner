@@ -16,6 +16,10 @@ extern char **environ;
 using namespace std;
 using namespace Json;
 
+
+char* executor = (char *)"sh";
+char* arguments = (char *)"-c";
+
 Core::Core(int argc, char *argv[]) {
     for (int i = 1; i < argc; i++) {
         this->findCandidate(string(argv[i]));
@@ -72,7 +76,6 @@ void Core::findCandidate(string candidate) {
 }
 
 void Core::jsonToEnv() {
-    cout << this->path_to_config << endl;
     ifstream file(string(this->path_to_config));
 
     Reader reader;
@@ -92,17 +95,33 @@ void Core::createProcess() {
         this->jsonToEnv();
     }
 
-    pid_t pid;
+    int _pid;
 
-    char command[this->command.length()];
+    char _command[this->command.length()];
 
-    strcpy(command, this->command.c_str());
+    strcpy(_command, this->command.c_str());
 
-    char *argv[] = {"sh", "-c", command, NULL};
-    posix_spawn(&pid, "/bin/sh", NULL, NULL, argv, environ);
+    char *argv[] = {executor, arguments, _command, nullptr};
+    posix_spawn(&_pid, "/bin/sh", nullptr, nullptr, argv, environ);
+    this->recognizePID(to_string(_pid));
+}
 
-    this->pid = pid;
-    this->isReloadingProcess = false;
+void Core::recognizePID(string _pid) {
+    ifstream tmpPID("/tmp/runner_pid.txt");
+
+    system(("pgrep -P " + _pid + " > /tmp/runner_pid.txt").c_str());
+
+    this_thread::sleep_for(chrono::milliseconds(800));
+
+    string childPid;
+    string sLine;
+
+    getline(tmpPID, sLine);
+
+    if (strlen(sLine.c_str()) != 0) {
+        this->pid = sLine;
+        this->recognizePID(sLine);
+    }
 }
 
 void Core::reloadProcess(string path_to_watch, FileStatus status) {
@@ -112,10 +131,8 @@ void Core::reloadProcess(string path_to_watch, FileStatus status) {
     }
 
     if (this->is_force_kill) {
-        for (int pid = this->pid; pid <= this->pid + 10; pid++) {
-            cout << "pid are:" << pid << endl;
-            system(("pkill -TERM -P " + to_string(pid)).c_str());
-        }
+        cout << "pid are" << this->pid << endl;
+        system(("kill -9" + this->pid).c_str());
     }
 
     this->createProcess();

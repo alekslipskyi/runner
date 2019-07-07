@@ -1,1 +1,0 @@
-add posibility to build shared library jsoncpp

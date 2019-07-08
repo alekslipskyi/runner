@@ -16,7 +16,6 @@ extern char **environ;
 using namespace std;
 using namespace Json;
 
-
 char* executor = (char *)"sh";
 char* arguments = (char *)"-c";
 
@@ -73,6 +72,8 @@ void Core::findCandidate(const char* candidate) {
     if (this->isCandidate(candidate, enumCandidates::port)) {
         this->port = this->parseCandidate(candidate, enumCandidates::port);
     }
+
+    this->isForeground = !this->isCandidate(candidate, enumCandidates::foreground);
 }
 
 void Core::jsonToEnv() {
@@ -119,6 +120,28 @@ void Core::reloadProcess(const string* _path_to_watch, FileStatus status) {
     }
 
     this->createProcess();
+}
+
+bool Core::isForegroundProcess() {
+    return this->isForeground;
+}
+
+void Core::putToBackground(int argc, char *__arguments[]) {
+    pid_t pid;
+    string stringCommand;
+
+    for (int i = 0; i < argc; i++) {
+        stringCommand += (string)"\"" + __arguments[i] + (string)"\"" + (string)" ";
+    }
+
+    stringCommand += " --foreground";
+
+    char __command[stringCommand.length()];
+
+    strcpy(__command, stringCommand.c_str());
+
+    char *argv[] = {executor, arguments, __command, nullptr};
+    posix_spawn(&pid, "/bin/sh", nullptr, nullptr, argv, environ);
 }
 
 void Core::exec() {

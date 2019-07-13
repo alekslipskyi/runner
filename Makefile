@@ -1,8 +1,26 @@
-glob:	filewatcher/index.h core/index.h core/index.cpp filewatcher/index.cpp index.cpp
-		g++ -std=c++17 filewatcher/index.cpp core/index.cpp index.cpp -o /usr/bin/runner -ljsoncpp -lstdc++fs
+compiler=g++
+cversion=-std=c++17
+flags=-ljsoncpp -lstdc++fs
 
-glob_test:	filewatcher/index.h core/index.h core/index.cpp filewatcher/index.cpp index.cpp
-			g++ -std=c++17 filewatcher/index.cpp core/index.cpp index.cpp -o /usr/bin/runner_test -ljsoncpp -lstdc++fs
+INSTALLDIR=/usr/bin
 
-local:	filewatcher/index.h core/index.h core/index.cpp filewatcher/index.cpp index.cpp
-		g++ -std=c++17 filewatcher/index.cpp core/index.cpp index.cpp -o ./runner -ljsoncpp -lstdc++fs
+glob=$(INSTALLDIR)/runner
+glob_test=$(INSTALLDIR)/runner_test
+local=./runner
+
+build=$(compiler) $(cversion)
+
+sources=$(shell find src/ -type f -name *.cpp)
+headers=$(shell find src -type f -name *.h)
+index_source=index.cpp
+
+build_command=$(build) $(headers) $(sources) $(index_source)
+
+glob_test:	$(header) $(sources)
+			$(build_command) -o $(glob_test) $(flags)
+
+glob:		$(header) $(sources)
+			$(build_command) -o $(glob) $(flags)
+
+local:		$(header) $(sources)
+			$(build_command) -o $(local) $(flags)

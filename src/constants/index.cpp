@@ -24,6 +24,11 @@ namespace commandInterface {
 
     namespace COMMANDS {
         const char *RUN = "run";
+        const char *LIST = "list";
+    }
+
+    namespace OUTPUT {
+        const int TABS = 20;
     }
 }
 
@@ -36,6 +41,14 @@ namespace configInterface {
         const char *CONFIG = "config";
         const char *FOREGROUND = "foreground";
     }
+}
+
+namespace CORE {
+    namespace TMP {
+        const char *PUB_FILE = "/tmp/runner_tasks.tmp";
+    }
+
+    const char *DEFAULT_VALUE_ENV = "none";
 }
 
 bool test_const() {

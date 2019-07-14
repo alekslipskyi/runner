@@ -4,7 +4,7 @@ project(runner)
 include_directories(${PROJECT_SOURCE_DIR})
 
 set(CMAKE_CXX_STANDARD 17)            # Enable c++17 standard
-set(SOURCE_FILES src/filewatcher/index.cpp src/core/index.cpp src/constants/index.cpp src/cli/index.cpp index.cpp)
+set(SOURCE_FILES src/filewatcher/index.cpp src/core/index.cpp src/constants/index.cpp src/cli/index.cpp index.cpp src/cli/helper.cpp)
 
 add_executable(runner ${SOURCE_FILES})
 

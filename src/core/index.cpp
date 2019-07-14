@@ -44,7 +44,7 @@ void Core::jsonToEnv() {
 }
 
 void Core::createProcess() {
-    if (strlen(this->env.port.c_str()) != 0) this->ensurePortIsFree();
+    if (strlen(this->env.port.c_str())) this->ensurePortIsFree();
     this_thread::sleep_for(chrono::milliseconds(300));
 
     if (strlen(this->env.path_to_config.c_str()) != 0) {
@@ -62,18 +62,59 @@ void Core::createProcess() {
 }
 
 void Core::ensurePortIsFree() {
-    system(("kill $(lsof -t -i :"+this->env.port+")").c_str());
+    FILE *tmp_lsof = tmpfile();
+
+    cout << "test are" << read_symlink(filesystem::path("/proc/self/fd") / std::to_string(fileno(tmp_lsof))) << endl;
+
+    system(("lsof -t -i :" + this->env.port + " > /tmp/runner_lsof.out").c_str());
+
+    string line;
+
+    char result[1];
+    fgets(result, sizeof result, tmp_lsof);
+
+    if (strlen(result)) {
+        system(("kill $(lsof -t -i :"+this->env.port+")").c_str());
+    }
+
+    fclose(tmp_lsof);
 }
 
 void Core::reloadProcess(const string* _path_to_watch, FileStatus status) {
     cout << "hello" << endl;
 
-    if(strlen(this->env.path_to_watch.c_str()) != 0 &&
+    if(strlen(this->env.path_to_watch.c_str()) &&
        !filesystem::is_regular_file(filesystem::path(*_path_to_watch)) && status != FileStatus::erased) {
         return;
     }
 
     this->createProcess();
+}
+
+void Core::saveBackgroundTask(pid_t pid) {
+    ofstream pub_runner_tasks(CORE::TMP::PUB_FILE);
+    string _path_to_watch = this->env.path_to_watch;
+    if (!strlen(_path_to_watch.c_str())) _path_to_watch = CORE::DEFAULT_VALUE_ENV;
+
+    string _path_to_config = this->env.path_to_config;
+    if (!strlen(_path_to_config.c_str())) _path_to_config = CORE::DEFAULT_VALUE_ENV;
+
+    string _path_to_watch_file = this->env.path_to_config;
+    if (!strlen(_path_to_watch_file.c_str())) _path_to_watch_file = CORE::DEFAULT_VALUE_ENV;
+
+    string _port = this->env.port;
+    if (!strlen(_port.c_str())) _port = CORE::DEFAULT_VALUE_ENV;
+
+    pub_runner_tasks
+    << random() << "|"
+    << pid << "|"
+    << this->env.command << "|"
+    << _path_to_watch << "|"
+    << _path_to_config << "|"
+    << _path_to_watch_file << "|"
+    << _port << endl;
+
+    pub_runner_tasks.close();
 }
 
 void Core::putToBackground(int argc, char *__arguments[]) {
@@ -92,6 +133,7 @@ void Core::putToBackground(int argc, char *__arguments[]) {
 
     char *argv[] = {executor, arguments, __command, nullptr};
     posix_spawn(&pid, "/bin/sh", nullptr, nullptr, argv, environ);
+    this->saveBackgroundTask(pid);
 }
 
 void Core::exec() {

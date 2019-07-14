@@ -10,7 +10,7 @@ local=./runner
 
 build=$(compiler) $(cversion)
 
-sources=$(shell find src/ -type f -name *.cpp)
+sources=$(shell find src/ -type f -name '*.cpp')
 headers=$(shell find src -type f -name *.h)
 index_source=index.cpp
 

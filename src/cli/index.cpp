@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <jsoncpp/json/json.h>
+#include <cctype>
 
 #include "index.h"
 
@@ -16,8 +17,10 @@ using namespace errors::CLI;
 using namespace Json;
 
 CLI::CLI(int argc, char *argv[]) {
-    if (this->isFromConfig(argv[1])) {
-        this->getEnvFromConfig(argv[2]);
+    if (this->isCommand(argv[1])) {
+        if (string(argv[1]) == string(COMMANDS::RUN)) this->getEnvFromConfig(argv[2]);
+        else if (string(argv[1]) == string(COMMANDS::LIST)) this->listRunnerProcess();
+        else this->reject((string(argv[1]) + "  " + string(NO_COMMAND)).c_str());
     } else {
         for (int i = 1; i < argc; i++) {
             this->getEnvFromCLI(argv[i], false);
@@ -31,11 +34,11 @@ string CLI::parseCandidate(const char *candidate, const char *needCandidate) {
 }
 
 bool CLI::isCandidate(const char* candidate, const char *expectedCandidate) {
-    return string(candidate).substr(0, strlen(expectedCandidate)) == expectedCandidate;
+    return string(candidate).substr(0, strlen(expectedCandidate)) == string(expectedCandidate);
 }
 
-bool CLI::isFromConfig(const char *first_argument) {
-    vector<const char*> commands = { COMMANDS::RUN };
+bool CLI::isCommand(const char *first_argument) {
+    vector<const char*> commands = { COMMANDS::RUN, COMMANDS::LIST };
     return helpers::includes<vector<const char *>, const char *>(commands, first_argument);
 }
 
@@ -44,44 +47,55 @@ void CLI::reject(const char *errMessage) {
     exit(0);
 }
 
+void CLI::listRunnerProcess() {
+    ifstream processes(CORE::TMP::PUB_FILE);
+
+    drawTableHeader();
+
+    if (processes.good()) {
+        string line;
+
+        while (getline(processes, line)) {
+            vector<string> splitted = helpers::split(line, "|");
+            cout << "test are: " << line << endl;
+
+            drawTableBody(splitted);
+        }
+    }
+
+    processes.close();
+}
+
 ENV CLI::getEnv() {
     return this->env;
 }
 
 void CLI::getEnvFromCLI(const char *candidate, bool default_foreground) {
+    this->env.isForeground = default_foreground;
+
     if (this->isCandidate(candidate, FLAGS::WATCH_PATH)) {
         this->env.path_to_watch = this->parseCandidate(candidate, FLAGS::WATCH_PATH);
-    }
-
-    if (this->isCandidate(candidate, FLAGS::WATCH_FILE)) {
+    } else if (this->isCandidate(candidate, FLAGS::WATCH_FILE)) {
         this->env.path_to_watch_file = this->parseCandidate(candidate, FLAGS::WATCH_FILE);
-    }
-
-    if (this->isCandidate(candidate, FLAGS::EXEC)) {
+    } else if (this->isCandidate(candidate, FLAGS::EXEC)) {
         this->env.command = this->parseCandidate(candidate, FLAGS::EXEC);
-    }
-
-    if (this->isCandidate(candidate, FLAGS::CONFIG)) {
+    } else if (this->isCandidate(candidate, FLAGS::CONFIG)) {
         this->env.path_to_config = this->parseCandidate(candidate, FLAGS::CONFIG);
-    }
-
-    if (this->isCandidate(candidate, FLAGS::PORT)) {
+    } else if (this->isCandidate(candidate, FLAGS::PORT)) {
         this->env.port = this->parseCandidate(candidate, FLAGS::PORT);
-    }
-
-    if (default_foreground) {
-        this->env.isForeground = true;
     } else {
         if (candidate == FLAGS::FOREGROUND) {
             this->env.isForeground = true;
+        } else {
+            this->reject((string(candidate) + " " + string(UNKNOWN_COMMAND)).c_str());
         }
     }
-
-    this->reject((string(candidate) + " " + string(UNKNOWN_COMMAND)).c_str());
 }
 
 void CLI::getEnvFromConfig(const char *path_to_env) {
     ifstream file(path_to_env);
+
+    this->env.isForeground = true;
 
     if (file.good()) {
         Reader reader;

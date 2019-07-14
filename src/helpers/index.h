@@ -4,6 +4,8 @@
 #include <ostream>
 #include <iostream>
 #include <stdio.h>
+#include <vector>
+#include <cstring>
 
 using namespace std;
 
@@ -21,6 +23,41 @@ namespace helpers {
 
         return nullptr;
     }
+
+    template <class String, class Delimiter>
+    vector<string> split(String search_line, Delimiter delimiter) {
+        vector<string> results;
+        int last_finded_index = 0;
+        int current_summary_length = 0;
+        String __searchLine = search_line;
+        string token = "none";
+        int i = 0;
+
+        if (!strlen(search_line.c_str()) || !strlen(delimiter)) return results;
+
+        while (strlen(token.c_str())) {
+            size_t found_index = __searchLine.find(delimiter);
+
+            if (found_index == string::npos) {
+                token = "";
+                if (strlen(__searchLine.c_str())) {
+                    results.push_back(__searchLine);
+                }
+            } else {
+                token = search_line.substr(last_finded_index, found_index);
+                current_summary_length += found_index + 1;
+                __searchLine = search_line.substr(current_summary_length, strlen(search_line.c_str()));
+
+                last_finded_index = found_index;
+                results.push_back(token);
+            }
+
+            i++;
+        }
+
+        return results;
+    }
+
 }
 
-#endif //RUNNER_INDEX_H
+#endif //RUNNER_HELPERS_H

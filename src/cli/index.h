@@ -2,22 +2,28 @@
 #define RUNNER_INDEX_H
 
 #include <string>
+#include <vector>
+
 #include "../constants/index.h"
 
 using namespace std;
 
 class CLI {
 private:
-    bool        isFromConfig(const char *first_argument);
+    bool        isCommand(const char *first_argument);
     bool        isCandidate(const char* candidate, const char *expectedCandidate);
     string      parseCandidate(const char *candidate, const char *needCandidate);
     void        getEnvFromCLI(const char *candidate, bool default_foreground);
     void        getEnvFromConfig(const char* path_to_env);
     void        reject(const char* errMessage);
+    void        listRunnerProcess();
 public:
     CLI(int argc, char* argv[]);
     ENV         env;
     ENV         getEnv();
 };
+
+void drawTableHeader();
+void drawTableBody(vector<string> splitted);
 
 #endif //RUNNER_INDEX_H

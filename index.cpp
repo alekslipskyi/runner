@@ -14,10 +14,13 @@ int main(int argc, char *argv[]) {
     ENV env = cli.getEnv();
     Core core(&env);
 
-    if (cli.getEnv().isForeground) {
+    if (!strlen(env.command.c_str())) return 1;
+
+    if (env.isForeground) {
         core.exec();
     } else {
         core.putToBackground(argc, argv);
     }
+
     return 1;
 }

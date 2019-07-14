@@ -29,6 +29,11 @@ namespace commandInterface {
 
     namespace COMMANDS {
         extern const char *RUN;
+        extern const char *LIST;
+    }
+
+    namespace OUTPUT {
+        extern const int TABS;
     }
 }
 
@@ -41,6 +46,15 @@ namespace configInterface {
         extern const char *CONFIG;
         extern const char *FOREGROUND;
     }
+}
+
+namespace CORE {
+    namespace TMP {
+        extern const char *PUB_FILE;
+        extern const char *PRIV_FILE;
+    }
+
+    extern const char *DEFAULT_VALUE_ENV;
 }
 
 class ENV {

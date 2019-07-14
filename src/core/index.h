@@ -15,6 +15,7 @@ private:
     void        ensurePortIsFree();
     void        createProcess();
     void        reloadProcess(const string* path_to_watch, FileStatus status);
+    void        saveBackgroundTask(pid_t pid);
     FileWatcher *fileWatcher;
 public:
     void        jsonToEnv();

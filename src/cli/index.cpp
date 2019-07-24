@@ -10,6 +10,7 @@
 
 #include "../constants/index.h"
 #include "../helpers/index.h"
+#include "../table/index.h"
 
 using namespace std;
 using namespace commandInterface;
@@ -50,17 +51,17 @@ void CLI::reject(const char *errMessage) {
 void CLI::listRunnerProcess() {
     ifstream processes(CORE::TMP::PUB_FILE);
 
-    drawTableHeader();
-
     if (processes.good()) {
-        string line;
-
-        while (getline(processes, line)) {
-            vector<string> splitted = helpers::split(line, "|");
-            cout << "test are: " << line << endl;
-
-            drawTableBody(splitted);
+        string lineHeader;
+        vector<string> data;
+        while (getline(processes, lineHeader)) {
+            vector<string> splitted = helpers::split(lineHeader, "|");
+            data.push_back(lineHeader);
         }
+
+        Table table(data);
+    } else {
+        cout << "processes are not exist" << endl;
     }
 
     processes.close();

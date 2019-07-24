@@ -23,7 +23,4 @@ public:
     ENV         getEnv();
 };
 
-void drawTableHeader();
-void drawTableBody(vector<string> splitted);
-
 #endif //RUNNER_INDEX_H

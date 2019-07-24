@@ -27,7 +27,6 @@ namespace helpers {
     template <class String, class Delimiter>
     vector<string> split(String search_line, Delimiter delimiter) {
         vector<string> results;
-        int last_finded_index = 0;
         int current_summary_length = 0;
         String __searchLine = search_line;
         string token = "none";
@@ -44,11 +43,10 @@ namespace helpers {
                     results.push_back(__searchLine);
                 }
             } else {
-                token = search_line.substr(last_finded_index, found_index);
+                token = __searchLine.substr(0, found_index);
                 current_summary_length += found_index + 1;
                 __searchLine = search_line.substr(current_summary_length, strlen(search_line.c_str()));
 
-                last_finded_index = found_index;
                 results.push_back(token);
             }
 

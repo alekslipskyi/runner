@@ -51,7 +51,6 @@ namespace configInterface {
 namespace CORE {
     namespace TMP {
         extern const char *PUB_FILE;
-        extern const char *PRIV_FILE;
     }
 
     extern const char *DEFAULT_VALUE_ENV;

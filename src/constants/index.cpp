@@ -28,7 +28,7 @@ namespace commandInterface {
     }
 
     namespace OUTPUT {
-        const int TABS = 20;
+        const int TABS = 4;
     }
 }
 

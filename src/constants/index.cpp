@@ -20,11 +20,18 @@ namespace commandInterface {
         const char *EXEC = "--exec";
         const char *CONFIG = "--config";
         const char *FOREGROUND = "--foreground";
+        const char *ENV_FILE = "--env";
     }
 
     namespace COMMANDS {
         const char *RUN = "run";
         const char *LIST = "list";
+    }
+
+    namespace COMMANDS_FOREGROUND {
+        const char *STOP = "stop";
+        const char *RESUME = "resume";
+        const char *RELOAD = "reload";
     }
 
     namespace OUTPUT {
@@ -46,9 +53,11 @@ namespace configInterface {
 namespace CORE {
     namespace TMP {
         const char *PUB_FILE = "/tmp/runner_tasks.tmp";
+        const char *LSOF_TMP = "/tmp/lsof_tmp.out";
     }
 
     const char *DEFAULT_VALUE_ENV = "none";
+    const char *APP_NAME = "runner";
 }
 
 bool test_const() {

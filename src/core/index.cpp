@@ -1,15 +1,15 @@
-#include <stdio.h>
 #include <iostream>
 #include <jsoncpp/json/json.h>
 #include <fstream>
 #include <spawn.h>
-#include <string.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
+#include <cstring>
+#include <csignal>
+#include <thread>
+#include <utility>
+#include "../helpers/index.h"
 
 #include "index.h"
+#include "../cli/index.h"
 
 extern char **environ;
 
@@ -19,13 +19,10 @@ using namespace Json;
 char* executor = (char *)"sh";
 char* arguments = (char *)"-c";
 
-Core::Core(ENV *env) {
-    this->env = *env;
-    if (strlen(this->env.path_to_watch.c_str()) != 0) {
-        this->fileWatcher = new FileWatcher(this->env.path_to_watch, "", chrono::milliseconds(500));
-    } else if (strlen(this->env.path_to_watch_file.c_str()) != 0) {
-        this->fileWatcher = new FileWatcher("", this->env.path_to_watch_file, chrono::milliseconds(500));
-    }
+Core::Core(ENV env) {
+    this->env = std::move(env);
+    this->fileWatcher = new FileWatcher(chrono::milliseconds(500));
+    this->isReload = true;
 }
 
 void Core::jsonToEnv() {
@@ -40,6 +37,22 @@ void Core::jsonToEnv() {
 
     for (auto &member : members) {
         setenv(member.c_str(), json[member].asString().c_str(), 1);
+    }
+}
+
+void Core::fileTOEnv() {
+    ifstream envFILE(this->env.path_to_env_file);
+
+    if (envFILE.good()) {
+        string line;
+
+        while(getline(envFILE, line)) {
+            vector<string> __env = helpers::split(line, "=");
+            setenv(__env[0].c_str(), __env[1].c_str(), 1);
+        }
+    } else {
+        cout << "env file is invalid" << endl;
+        exit(1);
     }
 }
 
@@ -62,29 +75,27 @@ void Core::createProcess() {
 }
 
 void Core::ensurePortIsFree() {
-    FILE *tmp_lsof = tmpfile();
+    system(("lsof -t -i :"+this->env.port+" > "+ CONSTANTS::CORE::TMP::LSOF_TMP +"").c_str());
 
-    cout << "test are" << read_symlink(filesystem::path("/proc/self/fd") / std::to_string(fileno(tmp_lsof))) << endl;
+    ifstream lsof_tmp(CONSTANTS::CORE::TMP::LSOF_TMP);
 
-    system(("lsof -t -i :" + this->env.port + " > /tmp/runner_lsof.out").c_str());
+    if (lsof_tmp.good()) {
+        string line;
 
-    string line;
-
-    char result[1];
-    fgets(result, sizeof result, tmp_lsof);
-
-    if (strlen(result)) {
-        system(("kill $(lsof -t -i :"+this->env.port+")").c_str());
+        while(getline(lsof_tmp, line)) {
+            kill(atoi(line.c_str()), SIGKILL);
+        }
+    } else {
+        cout << "something went wrong" << endl;
+        exit(1);
     }
-
-    fclose(tmp_lsof);
 }
 
-void Core::reloadProcess(const string* _path_to_watch, FileStatus status) {
-    cout << "hello" << endl;
+void Core::reloadProcess(const string* _path_to_watch, FileStatus status, bool forceReload) {
+    if (!this->isReload && !forceReload) return;
 
     if(strlen(this->env.path_to_watch.c_str()) &&
-       !filesystem::is_regular_file(filesystem::path(*_path_to_watch)) && status != FileStatus::erased) {
+       !filesystem::is_regular_file(filesystem::path(*_path_to_watch)) && status != FileStatus::erased && !forceReload) {
         return;
     }
 
@@ -136,16 +147,33 @@ void Core::putToBackground(int argc, char *__arguments[]) {
     this->saveBackgroundTask(pid);
 }
 
-void Core::exec() {
-    this->createProcess();
+void Core::stop() {
+    this->isReload = false;
+}
 
-    if (strlen(this->env.path_to_watch.c_str()) == 0) {
-        this->fileWatcher->listenFile([&] (string _path_to_watch, FileStatus status) -> void {
-            Core::reloadProcess(&_path_to_watch, status);
-        });
-    } else {
-        this->fileWatcher->listenPath([&] (string _path_to_watch, FileStatus status) -> void {
-            Core::reloadProcess(&_path_to_watch, status);
+void Core::resume() {
+    this->isReload = true;
+}
+
+void Core::reload() {
+    this->reloadProcess(&this->env.path_to_watch, FileStatus::modified, true);
+}
+
+void Core::exec() {
+    if (strlen(this->env.path_to_env_file.c_str())) {
+        Core::fileTOEnv();
+        this->fileWatcher->addListenChange(this->env.path_to_env_file, [&] (const string& _path_to_watch, FileStatus status) -> void {
+            Core::fileTOEnv();
+            Core::reloadProcess(&this->env.path_to_env_file, FileStatus::modified, false);
         });
     }
+
+    if (strlen(this->env.path_to_watch.c_str()) != 0) {
+        this->fileWatcher->addListenChange(this->env.path_to_watch, [&] (const string& _path_to_watch, FileStatus status) -> void {
+            Core::reloadProcess(&_path_to_watch, status, false);
+        });
+    }
+
+    this->createProcess();
+    this->fileWatcher->startListen();
 }

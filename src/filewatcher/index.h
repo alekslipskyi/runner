@@ -8,6 +8,7 @@
 #include <functional>
 #include <thread>
 #include <filesystem>
+#include <vector>
 
 using namespace std;
 
@@ -17,15 +18,18 @@ class FileWatcher {
 private:
     unordered_map<string, filesystem::file_time_type> paths_;
     chrono::duration<int, milli>    delay;
+    vector<std::function<void ()>>  events;
     bool                            running_;
     bool                            contains(const string &key);
     string                          path_to_watch;
     string                          path_to_file;
     filesystem::file_time_type      current_file_last_write_time;
+    void                            addListenFile(string _path_to_watch, const std::function<void (string, FileStatus)> &action);
+    void                            addListenPath(string _path_to_file, const std::function<void (string, FileStatus)> &action);
 public:
-    FileWatcher(string path_to_watch, string path_to_file, chrono::duration<int, milli> delay);
-    void                            listenPath(const std::function<void (string, FileStatus)> &action);
-    void                            listenFile(const std::function<void (string, FileStatus)> &action);
+    FileWatcher(chrono::duration<int, milli> delay);
+    void                            startListen();
+    void                            addListenChange(const string& _path_to_watch, const std::function<void (string, FileStatus)> &action);
 };
 
 #endif

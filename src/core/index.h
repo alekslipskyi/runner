@@ -12,16 +12,22 @@ using namespace std;
 class Core {
 private:
     ENV         env;
+    bool        isReload;
     void        ensurePortIsFree();
     void        createProcess();
-    void        reloadProcess(const string* path_to_watch, FileStatus status);
+    void        reloadProcess(const string* path_to_watch, FileStatus status, bool forceReload);
     void        saveBackgroundTask(pid_t pid);
     FileWatcher *fileWatcher;
-public:
+protected:
     void        jsonToEnv();
     void        exec();
-    Core(ENV *env);
+    void        fileTOEnv();
+    void        stop();
+    void        resume();
+    void        reload();
     void        putToBackground(int argc, char *__arguments[]);
+public:
+    explicit    Core(ENV env);
 };
 
 

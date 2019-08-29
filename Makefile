@@ -1,6 +1,6 @@
 compiler=g++
 cversion=-std=c++17
-flags=-ljsoncpp -lstdc++fs
+flags=-ljsoncpp -lpthread -lstdc++fs
 
 INSTALLDIR=/usr/bin
 

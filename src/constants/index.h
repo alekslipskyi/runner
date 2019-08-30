@@ -19,10 +19,7 @@ namespace errors {
 
 namespace commandInterface {
     namespace FLAGS {
-        extern const char *WATCH_PATH;
-        extern const char *WATCH_FILE;
         extern const char *PORT;
-        extern const char *EXEC;
         extern const char *CONFIG;
         extern const char *FOREGROUND;
         extern const char *ENV_FILE;

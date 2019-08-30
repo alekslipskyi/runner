@@ -27,16 +27,17 @@ Core::Core(ENV env) {
 
 void Core::jsonToEnv() {
     ifstream file(string(this->env.path_to_config));
+    if (file.good()) {
+        Reader reader;
+        Value json;
 
-    Reader reader;
-    Value json;
+        reader.parse(file, json);
 
-    reader.parse(file, json);
+        Value::Members members = json.getMemberNames();
 
-    Value::Members members = json.getMemberNames();
-
-    for (auto &member : members) {
-        setenv(member.c_str(), json[member].asString().c_str(), 1);
+        for (auto &member : members) {
+            setenv(member.c_str(), json[member].asString().c_str(), 1);
+        }
     }
 }
 

@@ -78,12 +78,11 @@ ENV CLI::getEnv(int argc, char *argv[]) {
         else if (string(argv[1]) == string(COMMANDS::LIST)) CLI::listRunnerProcess();
         else CLI::reject((string(argv[1]) + "  " + string(NO_COMMAND)).c_str());
     } else {
-
         env.command = argv[1];
         env.path_to_watch = argv[2];
 
         for (int i = 3; i < argc; i++) {
-            CLI::getEnvFromCLI(argv[i], true, &env);
+            CLI::getEnvFromCLI(argv[3], true, &env);
         }
         if (strlen(env.command.c_str()) == 0) CLI::reject(NO_COMMAND);
     }
@@ -91,7 +90,7 @@ ENV CLI::getEnv(int argc, char *argv[]) {
     return env;
 }
 
-ENV CLI::getEnvFromCLI(const char *candidate, bool default_foreground, ENV *env) {
+void CLI::getEnvFromCLI(const char *candidate, bool default_foreground, ENV *env) {
     env->isForeground = default_foreground;
 
     if (CLI::isCandidate(candidate, FLAGS::CONFIG)) {

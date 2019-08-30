@@ -14,10 +14,7 @@ namespace errors {
 
 namespace commandInterface {
     namespace FLAGS {
-        const char *WATCH_PATH = "--watchpath";
-        const char *WATCH_FILE = "--watchfile";
         const char *PORT = "--port";
-        const char *EXEC = "--exec";
         const char *CONFIG = "--config";
         const char *FOREGROUND = "--foreground";
         const char *ENV_FILE = "--env";

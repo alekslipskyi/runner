@@ -15,7 +15,7 @@ class CLI: public Core {
 private:
     static bool        isCommand(const char *first_argument);
     static bool        isCandidate(const char* candidate, const char *expectedCandidate);
-    static ENV         getEnvFromCLI(const char *candidate, bool default_foreground, ENV *env);
+    static void        getEnvFromCLI(const char *candidate, bool default_foreground, ENV *env);
     static ENV         getEnvFromConfig(const char* path_to_env);
     static void        reject(const char* errMessage);
     static string      parseCandidate(const char *candidate, const char *needCandidate);

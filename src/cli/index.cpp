@@ -80,9 +80,10 @@ ENV CLI::getEnv(int argc, char *argv[]) {
     } else {
         env.command = argv[1];
         env.path_to_watch = argv[2];
+        env.fileType = argv[3];
 
-        for (int i = 3; i < argc; i++) {
-            CLI::getEnvFromCLI(argv[3], true, &env);
+        for (int i = 4; i < argc; i++) {
+            CLI::getEnvFromCLI(argv[i], true, &env);
         }
         if (strlen(env.command.c_str()) == 0) CLI::reject(NO_COMMAND);
     }
@@ -125,6 +126,7 @@ ENV CLI::getEnvFromConfig(const char *path_to_env) {
 
         for (auto &envName: jsonENV) {
             if (envName == configInterface::CONFIG::EXEC) env.command = json[envName].asString();
+            if (envName == configInterface::CONFIG::FILE_TYPE) env.fileType = json[envName].asString();
             if (envName == configInterface::CONFIG::WATCH_PATH) env.path_to_watch = json[envName].asString();
             if (envName == configInterface::CONFIG::CONFIG) env.path_to_config = json[envName].asString();
             if (envName == configInterface::CONFIG::PORT) env.port= json[envName].asString();

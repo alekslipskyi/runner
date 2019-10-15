@@ -5,7 +5,6 @@
 #include <thread>
 #include <experimental/filesystem>
 #include <cstring>
-#include <iostream>
 
 #include "index.h"
 

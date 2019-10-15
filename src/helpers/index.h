@@ -3,9 +3,10 @@
 
 #include <ostream>
 #include <iostream>
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
 #include <cstring>
+#include <functional>
 
 using namespace std;
 
@@ -22,6 +23,20 @@ namespace helpers {
         for (auto &elemArray: array) if (elemArray == element) return elemArray;
 
         return nullptr;
+    }
+
+    template <class Array, class Element>
+    bool every(Array array, const std::function<bool( Element elem )> &cb) {
+        int lengthOfMatched = 0;
+
+        for (auto &elem : array) {
+            cout << "elem >> " << elem << endl;
+            cout << "result is >> " << cb(elem) << endl;
+
+            if (cb(elem)) { lengthOfMatched++; }
+        }
+
+        return lengthOfMatched == array.size();
     }
 
     template <class String, class Delimiter>

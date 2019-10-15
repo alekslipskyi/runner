@@ -6,8 +6,9 @@
 #include <csignal>
 #include <thread>
 #include <utility>
-#include "../helpers/index.h"
+#include <regex>
 
+#include "../helpers/index.h"
 #include "index.h"
 #include "../cli/index.h"
 
@@ -95,8 +96,21 @@ void Core::ensurePortIsFree() {
 void Core::reloadProcess(const string* _path_to_watch, FileStatus status, bool forceReload) {
     if (!this->isReload && !forceReload) return;
 
+    string filePath = filesystem::path(*_path_to_watch);
+    vector<string> fileTypes = helpers::split(env.fileType, ",");
+
+    if (fileTypes[0] != "*") {
+        if (helpers::every<vector<string>, string>(fileTypes, [&] (const string& type) -> bool {
+            regex match("(.*)." + type);
+            return !regex_match(filePath, match);
+        })) {
+            return;
+        }
+    }
+
     if(strlen(this->env.path_to_watch.c_str()) &&
-       !filesystem::is_regular_file(filesystem::path(*_path_to_watch)) && status != FileStatus::erased && !forceReload) {
+       !filesystem::is_regular_file(filePath) &&
+       status != FileStatus::erased && !forceReload) {
         return;
     }
 

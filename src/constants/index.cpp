@@ -40,6 +40,7 @@ namespace configInterface {
     namespace CONFIG {
         const char *WATCH_PATH = "watchpath";
         const char *WATCH_FILE = "watchfile";
+        const char *FILE_TYPE = "file_type";
         const char *PORT = "port";
         const char *EXEC = "exec";
         const char *CONFIG = "config";

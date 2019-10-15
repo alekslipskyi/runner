@@ -45,6 +45,7 @@ namespace configInterface {
     namespace CONFIG {
         extern const char *WATCH_PATH;
         extern const char *WATCH_FILE;
+        extern const char *FILE_TYPE;
         extern const char *PORT;
         extern const char *EXEC;
         extern const char *CONFIG;
@@ -66,6 +67,7 @@ class ENV {
 public:
     string      command;
     bool        isForeground;
+    string      fileType;
     string      path_to_config;
     string      path_to_watch;
     string      path_to_env_file;

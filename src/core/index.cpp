@@ -7,6 +7,7 @@
 #include <thread>
 #include <utility>
 #include <regex>
+#include <random>
 
 #include "../helpers/index.h"
 #include "index.h"
@@ -58,22 +59,75 @@ void Core::fileTOEnv() {
     }
 }
 
+int Core::generateIDProcess() {
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<double> dist(1, 100000);
+
+    return dist(mt);
+}
+
+void Core::destroyProcessFile() {
+    auto fileName = ("/tmp/runner_output_" + to_string(this->processID)).c_str();
+
+    ifstream fileProcess(fileName);
+
+    if (fileProcess.good()) remove(fileName);
+}
+
+void Core::createProcessFile(const string &fileName) {
+    ofstream processFile("/tmp/" + fileName);
+    processFile.close();
+}
+
+void Core::putToOutLogs(const string& fileName) {
+    auto lastIteration = 0;
+
+    while (true) {
+        ifstream processFile("/tmp/" + fileName);
+
+        auto currentIteration = 0;
+        string line;
+
+        while(getline(processFile, line)) {
+            currentIteration++;
+            if (currentIteration > lastIteration) cout << line << endl;
+            if (line.find("[break]") != string::npos) {
+                while (cin.get() != '\n') {}
+            }
+
+            this_thread::sleep_for(chrono::milliseconds(50));
+        }
+
+        this_thread::sleep_for(chrono::milliseconds(150));
+        lastIteration = currentIteration;
+    }
+}
+
 void Core::createProcess() {
     if (strlen(this->env.port.c_str())) this->ensurePortIsFree();
+    if (this->processID) this->destroyProcessFile();
+
+    auto _processID = Core::generateIDProcess();
+    auto fileName = "runner_output_" + to_string(_processID);
+
+    Core::createProcessFile(fileName);
+
     this_thread::sleep_for(chrono::milliseconds(300));
 
-    if (strlen(this->env.path_to_config.c_str()) != 0) {
-        this->jsonToEnv();
-    }
+    if (strlen(this->env.path_to_config.c_str()) != 0) this->jsonToEnv();
 
     int _pid;
 
     char _command[this->env.command.length()];
 
-    strcpy(_command, this->env.command.c_str());
+    strcpy(_command, (this->env.command + " > /tmp/" + fileName).c_str());
 
     char *argv[] = {executor, arguments, _command, nullptr};
     posix_spawn(&_pid, "/bin/sh", nullptr, nullptr, argv, environ);
+
+    this->putToOutLogs(fileName);
+    this->processID = _processID;
 }
 
 void Core::ensurePortIsFree() {
@@ -84,9 +138,8 @@ void Core::ensurePortIsFree() {
     if (lsof_tmp.good()) {
         string line;
 
-        while(getline(lsof_tmp, line)) {
-            kill(atoi(line.c_str()), SIGKILL);
-        }
+        while(getline(lsof_tmp, line)) kill(atoi(line.c_str()), SIGKILL);
+
     } else {
         cout << "something went wrong" << endl;
         exit(1);

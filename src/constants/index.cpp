@@ -26,9 +26,9 @@ namespace commandInterface {
     }
 
     namespace COMMANDS_FOREGROUND {
-        const char *STOP = "stop";
-        const char *RESUME = "resume";
-        const char *RELOAD = "reload";
+        const char *STOP = "s";
+        const char *RESUME = "w";
+        const char *RELOAD = "r";
     }
 
     namespace OUTPUT {

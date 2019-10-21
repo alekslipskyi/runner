@@ -30,10 +30,7 @@ namespace helpers {
         int lengthOfMatched = 0;
 
         for (auto &elem : array) {
-            cout << "elem >> " << elem << endl;
-            cout << "result is >> " << cb(elem) << endl;
-
-            if (cb(elem)) { lengthOfMatched++; }
+            if (cb(elem)) lengthOfMatched++;
         }
 
         return lengthOfMatched == array.size();

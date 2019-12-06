@@ -100,6 +100,8 @@ void CLI::getEnvFromCLI(const char *candidate, bool default_foreground, ENV *env
         env->port = CLI::parseCandidate(candidate, FLAGS::PORT);
     } else if (CLI::isCandidate(candidate, FLAGS::ENV_FILE)) {
         env->path_to_env_file = CLI::parseCandidate(candidate, FLAGS::ENV_FILE);
+    } else if (CLI::isCandidate(candidate, FLAGS::DEBUG)) {
+        env->isDebug = true;
     } else {
         if (candidate == FLAGS::FOREGROUND) {
             env->isForeground = true;

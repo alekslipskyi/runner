@@ -19,7 +19,7 @@ private:
     void        reloadProcess(const string* path_to_watch, FileStatus status, bool forceReload);
     void        saveBackgroundTask(pid_t pid);
     void        destroyProcessFile();
-    static void        createProcessFile(const string& fileName);
+    void        createProcessFile(const string& fileName);
     static void putToOutLogs(const string& fileName);
     static int  generateIDProcess();
     FileWatcher *fileWatcher;

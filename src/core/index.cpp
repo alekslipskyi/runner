@@ -73,11 +73,18 @@ void Core::destroyProcessFile() {
     ifstream fileProcess(fileName);
 
     if (fileProcess.good()) remove(fileName);
+    else if (this->env.isDebug) {
+        cout << "deleting process file error" << endl;
+    }
 }
 
 void Core::createProcessFile(const string &fileName) {
     ofstream processFile("/tmp/" + fileName);
-    processFile.close();
+    if (processFile.good()) {
+        processFile.close();
+    } else if (this->env.isDebug) {
+        cout << "creating process file error" << endl;
+    }
 }
 
 void Core::putToOutLogs(const string& fileName) {
@@ -86,32 +93,43 @@ void Core::putToOutLogs(const string& fileName) {
     while (true) {
         ifstream processFile("/tmp/" + fileName);
 
-        auto currentIteration = 0;
-        string line;
+        if (processFile.good()) {
+            auto currentIteration = 0;
+            string line;
 
-        while(getline(processFile, line)) {
-            currentIteration++;
-            if (currentIteration > lastIteration) cout << line << endl;
-            if (line.find("[break]") != string::npos) {
-                while (cin.get() != '\n') {}
+            while(getline(processFile, line)) {
+                currentIteration++;
+                if (currentIteration > lastIteration) cout << line << endl;
+                if (line.find("[break]") != string::npos) {
+                    while (cin.get() != '\n') {}
+                }
+
+                this_thread::sleep_for(chrono::milliseconds(20));
             }
 
-            this_thread::sleep_for(chrono::milliseconds(50));
+            this_thread::sleep_for(chrono::milliseconds(100));
+            lastIteration = currentIteration;
+        } else {
+            break;
         }
-
-        this_thread::sleep_for(chrono::milliseconds(150));
-        lastIteration = currentIteration;
     }
 }
 
 void Core::createProcess() {
+    if (this->env.isDebug) {
+        cout << "Process is creating" << endl;
+    }
+
     if (strlen(this->env.port.c_str())) this->ensurePortIsFree();
     if (this->processID) this->destroyProcessFile();
 
     auto _processID = Core::generateIDProcess();
     auto fileName = "runner_output_" + to_string(_processID);
 
-    Core::createProcessFile(fileName);
+    this->createProcessFile(fileName);
+
+    thread command(Core::putToOutLogs, fileName);
+    command.detach();
 
     this_thread::sleep_for(chrono::milliseconds(300));
 
@@ -125,9 +143,6 @@ void Core::createProcess() {
 
     char *argv[] = {executor, arguments, _command, nullptr};
     posix_spawn(&_pid, "/bin/sh", nullptr, nullptr, argv, environ);
-
-    this->putToOutLogs(fileName);
-    this->processID = _processID;
 }
 
 void Core::ensurePortIsFree() {
@@ -148,6 +163,10 @@ void Core::ensurePortIsFree() {
 
 void Core::reloadProcess(const string* _path_to_watch, FileStatus status, bool forceReload) {
     if (!this->isReload && !forceReload) return;
+
+    if (this->env.isDebug) {
+        cout << "Process is reloading" << endl;
+    }
 
     string filePath = filesystem::path(*_path_to_watch);
     vector<string> fileTypes = helpers::split(env.fileType, ",");
@@ -216,18 +235,34 @@ void Core::putToBackground(int argc, char *__arguments[]) {
 }
 
 void Core::stop() {
+    if (this->env.isDebug) {
+        cout << "Watch is stoped" << endl;
+    }
+
     this->isReload = false;
 }
 
 void Core::resume() {
+    if (this->env.isDebug) {
+        cout << "Watch is resumed" << endl;
+    }
+
     this->isReload = true;
 }
 
 void Core::reload() {
+    if (this->env.isDebug) {
+        cout << "Watch is reloaded" << endl;
+    }
+
     this->reloadProcess(&this->env.path_to_watch, FileStatus::modified, true);
 }
 
 void Core::exec() {
+    if (this->env.isDebug) {
+        cout << "executing" << endl;
+    }
+
     if (strlen(this->env.path_to_env_file.c_str())) {
         Core::fileTOEnv();
         this->fileWatcher->addListenChange(this->env.path_to_env_file, [&] (const string& _path_to_watch, FileStatus status) -> void {

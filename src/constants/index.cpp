@@ -18,6 +18,7 @@ namespace commandInterface {
         const char *CONFIG = "--config";
         const char *FOREGROUND = "--foreground";
         const char *ENV_FILE = "--env";
+        const char *DEBUG = "--debug";
     }
 
     namespace COMMANDS {

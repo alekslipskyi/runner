@@ -23,6 +23,7 @@ namespace commandInterface {
         extern const char *CONFIG;
         extern const char *FOREGROUND;
         extern const char *ENV_FILE;
+        extern const char *DEBUG;
     }
 
     namespace COMMANDS {
@@ -67,6 +68,7 @@ class ENV {
 public:
     string      command;
     bool        isForeground;
+    bool        isDebug;
     string      fileType;
     string      path_to_config;
     string      path_to_watch;

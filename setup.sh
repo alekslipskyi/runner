@@ -1,1 +1,1 @@
-sudo apt-get install libjsoncpp-dev
+sudo apt-get -y install libjsoncpp-dev
